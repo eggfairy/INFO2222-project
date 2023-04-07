@@ -115,8 +115,14 @@ def show_friends():
 @post("/chat")
 def chat():
     username = request.forms.get('user')
-    print(username)
     return model.chat(username)
+
+#-----------------------------------------------------------------------------
+
+@get('/logout')
+def logout():
+    return model.logout()
+
 
 #-----------------------------------------------------------------------------
 

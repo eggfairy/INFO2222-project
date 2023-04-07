@@ -23,7 +23,11 @@ def index():
         index
         Returns the view for the index
     '''
-    return page_view("index")
+    global login
+    if login:
+        return page_view("index", header='header_in')
+    else:
+        return page_view("index")
 
 #-----------------------------------------------------------------------------
 # Login
@@ -52,13 +56,12 @@ def login_check(username, password):
 
     
     err_str = "Incorrect Username" #error massage by default is incorrect username
-
+    global login, name
     with open('info.json', 'r') as f:
         data = json.load(f)
 
         for row in data['user_info']:
             if row['username'] == username and row['password'] == password: #both correct
-                global login, name
                 login = True
                 name = username
                 break
@@ -67,9 +70,8 @@ def login_check(username, password):
                 err_str = "Incorrect Password"
             
     #if none of these if statements are executed, invalid username
-        
     if login: 
-        return page_view("valid", name=username,header='header_no_pic')
+        return page_view("valid", name=username,header='header_in_no_pic')
     else:
         return page_view("invalid", reason=err_str, header='header_no_pic')
 
@@ -91,14 +93,14 @@ def friends():
     for f in friends:
         #html_form += f'<li><a href="/chat">{f}</a></li>\n'
         html_form += f'<button name="user" type="submit" value={f}>{f}</button>'
-    return page_view("friend_list", header='header_no_pic', friends=html_form)
+    return page_view("friend_list", header='header_in_no_pic', friends=html_form)
 
 
 #-----------------------------------------------------------------------------
 # Chat_page
 #-----------------------------------------------------------------------------
 def chat(username):
-    return page_view("chat", header='header_no_pic', name=username)
+    return page_view("chat", header='header_in_no_pic', name=username)
 
 #-----------------------------------------------------------------------------
 # About
@@ -109,8 +111,16 @@ def about():
         about
         Returns the view for the about page
     '''
-    return page_view("about", garble=about_garble())
+    global login
+    if login:
+        return page_view("about", garble=about_garble(), header='header_in')
+    else:
+        return page_view("about", garble=about_garble())
 
+def logout():
+    global login
+    login = False
+    return page_view("index")
 
 
 # Returns a random string each time

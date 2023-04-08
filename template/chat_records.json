@@ -1,0 +1,62 @@
+{
+  "chat_records": [
+    {
+      "username": "eggfairy",
+      "records": {
+        "Anna": "",
+        "Bella": "",
+        "Cathy": "",
+        "David": ""
+      }
+    },
+    {
+      "username": "admin",
+      "records": {
+        "Anna": "<div class=\"outgoing-chats\">\n<div class=\"outgoing-msg\">\n<div class=\"outgoing-chats-msg\">\n<p class=\"received-msg\">Hi, Anna. How are you?</p>\n</div>\n</div>\n</div><div class=\"received-chats\">\n<div class=\"received-msg\">\n<div class=\"received-msg-inbox\">\n<p class=\"single-msg\">hello</p>\n</div>\n</div>\n</div><div class=\"received-chats\">\n<div class=\"received-msg\">\n<div class=\"received-msg-inbox\">\n<p class=\"single-msg\">yehhhh</p>\n</div>\n</div>\n</div><div class=\"outgoing-chats\">\n<div class=\"outgoing-msg\">\n<div class=\"outgoing-chats-msg\">\n<p class=\"received-msg\">hi</p>\n</div>\n</div>\n</div><div class=\"received-chats\">\n<div class=\"received-msg\">\n<div class=\"received-msg-inbox\">\n<p class=\"single-msg\">beebee i am a sheep</p>\n</div>\n</div>\n</div>",
+        "Bella": "<div class=\"outgoing-chats\">\n<div class=\"outgoing-msg\">\n<div class=\"outgoing-chats-msg\">\n<p class=\"received-msg\">hello</p>\n</div>\n</div>\n</div><div class=\"received-chats\">\n<div class=\"received-msg\">\n<div class=\"received-msg-inbox\">\n<p class=\"single-msg\">hi</p>\n</div>\n</div>\n</div>"
+      }
+    },
+    {
+      "username": "Anna",
+      "records": {
+        "admin": "<div class=\"received-chats\">\n<div class=\"received-msg\">\n<div class=\"received-msg-inbox\">\n<p class=\"single-msg\">Hi, Anna. How are you?</p>\n</div>\n</div>\n</div><div class=\"outgoing-chats\">\n<div class=\"outgoing-msg\">\n<div class=\"outgoing-chats-msg\">\n<p class=\"received-msg\">hello</p>\n</div>\n</div>\n</div><div class=\"outgoing-chats\">\n<div class=\"outgoing-msg\">\n<div class=\"outgoing-chats-msg\">\n<p class=\"received-msg\">yehhhh</p>\n</div>\n</div>\n</div><div class=\"received-chats\">\n<div class=\"received-msg\">\n<div class=\"received-msg-inbox\">\n<p class=\"single-msg\">hi</p>\n</div>\n</div>\n</div><div class=\"outgoing-chats\">\n<div class=\"outgoing-msg\">\n<div class=\"outgoing-chats-msg\">\n<p class=\"received-msg\">beebee i am a sheep</p>\n</div>\n</div>\n</div>"
+      }
+    },
+    {
+      "username": "Bella",
+      "records": {
+        "admin": "<div class=\"received-chats\">\n<div class=\"received-msg\">\n<div class=\"received-msg-inbox\">\n<p class=\"single-msg\">hello</p>\n</div>\n</div>\n</div><div class=\"outgoing-chats\">\n<div class=\"outgoing-msg\">\n<div class=\"outgoing-chats-msg\">\n<p class=\"received-msg\">hi</p>\n</div>\n</div>\n</div>"
+      }
+    },
+    {
+      "username": "Cathy",
+      "records": {}
+    },
+    {
+      "username": "David",
+      "records": {
+        "eggfairy": ""
+      }
+    },
+    {
+      "username": "Ethan",
+      "records": {}
+    },
+    {
+      "username": "Felix",
+      "records": {}
+    },
+    {
+      "username": "Gura",
+      "records": {}
+    },
+    {
+      "username": "Harrison",
+      "records": {}
+    },
+    {
+      "username": "Iris",
+      "records": {}
+    }
+  ]
+}

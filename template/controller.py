@@ -73,7 +73,6 @@ def get_index():
         Serves the index page
     '''
     username = request.query.get('user')
-    print(username)
     return model.index(username)
 
 #-----------------------------------------------------------------------------
@@ -116,7 +115,7 @@ def show_friends():
 
 #-----------------------------------------------------------------------------
 
-@post("/chat") ##??
+@post("/chat")
 def chat():
     username = request.forms.get('user').split(' ')[0]
     recipient = request.forms.get('user').split(' ')[1]
@@ -149,6 +148,36 @@ def get_about():
     '''
     username = request.query.get('user')
     return model.about(username)
+#-----------------------------------------------------------------------------
+
+@get('/sign_up')
+def show_sign_up_page():
+    return model.show_sign_up_page()
+
+#-----------------------------------------------------------------------------
+
+@post('/sign_up')
+def sign_up_check():
+    username = request.forms.get('username')
+    password = request.forms.get('password')
+    password_2 = request.forms.get('password_2')
+    return model.sign_up_check(username, password, password_2)
+
+#-----------------------------------------------------------------------------
+
+@get('/add_friends')
+def show_add_friends():
+    username = request.query.get('user')
+    return model.show_add_friends(username)
+
+#-----------------------------------------------------------------------------
+
+@post('/add_friends')
+def add_friends_check():
+    username = request.query.get('user')
+    recipient = request.forms.get('username')
+    return model.add_friends_check(username, recipient)
+
 #-----------------------------------------------------------------------------
 
 # Help with debugging

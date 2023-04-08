@@ -1,54 +1,73 @@
 {
-    "user_info": [
-        {
-            "username" : "admin",
-            "password" : "password",
-            "friends" : ["Anna"]
-        },
-        {
-            "username" : "eggfairy",
-            "password" : "123",
-            "friends" : ["Anna", "Bella", "Cathy"]
-        },
-        {
-            "username" : "Anna",
-            "password" : "111",
-            "friends" : []
-        },
-        {
-            "username" : "Bella",
-            "password" : "222",
-            "friends" : []
-        },
-        {
-            "username" : "Cathy",
-            "password" : "333",
-            "friends" : []
-        },
-        {
-            "username" : "David",
-            "password" : "444",
-            "friends" : []
-        },
-        {
-            "username" : "Ethan",
-            "password" : "555",
-            "friends" : []
-        },
-        {
-            "username" : "Felix",
-            "password" : "666",
-            "friends" : []
-        },
-        {
-            "username" : "Gura",
-            "password" : "777",
-            "friends" : []
-        },
-        {
-            "username" : "Harrison",
-            "password" : "888",
-            "friends" : []
-        }
-    ]
+  "user_info": [
+    {
+      "username": "admin",
+      "password": "password",
+      "friends": [
+        "Anna",
+        "Bella"
+      ]
+    },
+    {
+      "username": "eggfairy",
+      "password": "123",
+      "friends": [
+        "Anna",
+        "Bella",
+        "Cathy",
+        "David"
+      ]
+    },
+    {
+      "username": "Anna",
+      "password": "111",
+      "friends": [
+        "admin"
+      ]
+    },
+    {
+      "username": "Bella",
+      "password": "222",
+      "friends": [
+        "admin"
+      ]
+    },
+    {
+      "username": "Cathy",
+      "password": "333",
+      "friends": []
+    },
+    {
+      "username": "David",
+      "password": "444",
+      "friends": [
+        "eggfairy"
+      ]
+    },
+    {
+      "username": "Ethan",
+      "password": "555",
+      "friends": []
+    },
+    {
+      "username": "Felix",
+      "password": "666",
+      "friends": []
+    },
+    {
+      "username": "Gura",
+      "password": "777",
+      "friends": []
+    },
+    {
+      "username": "Harrison",
+      "password": "888",
+      "friends": []
+    },
+    {
+      "username": "Iris",
+      "password": "999",
+      "friends": []
+    }
+  ]
 }

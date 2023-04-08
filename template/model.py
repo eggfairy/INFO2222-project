@@ -108,16 +108,45 @@ def friends(user):
 # Chat page
 #-----------------------------------------------------------------------------
 def chat(username, recipient):
-    return page_view("chat", header='header_chatting', user=username, recipient=recipient, msgs='')
+    records = ''
+    with open('chat_records.json', 'r') as f:
+        data = json.load(f)
+        for row in data['chat_records']:
+            if row['username'] == username:
+                records = row['records'][recipient]
+    
+    return page_view("chat", header='header_chatting', user=username, recipient=recipient, msgs=records)
 
 #-----------------------------------------------------------------------------
 # send message
 #-----------------------------------------------------------------------------
 def send_msg(msg, username, recipient):
-    global msgs
-    if msg != None:
-        msgs += f'<div class="outgoing-chats">\n<div class="outgoing-msg">\n<div class="outgoing-chats-msg">\n<p class="received-msg">{msg}</p>\n</div>\n</div>\n</div>'
-    return page_view('chat', header='header_chatting', user=username, recipient=recipient, msgs=msgs)
+    records = ''
+    data = None
+    with open('chat_records.json', 'r') as f:
+        data = json.load(f)
+        for i in range(len(data['chat_records'])):
+            if data['chat_records'][i]['username'] == username:
+                records = data['chat_records'][i]['records'][recipient]
+                if msg == None or msg == '':
+                    return page_view('chat', header='header_chatting', user=username, recipient=recipient, msgs=records)
+
+                records += f'<div class="outgoing-chats">\n<div class="outgoing-msg">\n<div class="outgoing-chats-msg">\n<p class="received-msg">{msg}</p>\n</div>\n</div>\n</div>'
+                data['chat_records'][i]['records'][recipient] = records
+            
+            if data['chat_records'][i]['username'] == recipient:
+                data['chat_records'][i]['records'][username] += f'<div class="received-chats">\n<div class="received-msg">\n<div class="received-msg-inbox">\n<p class="single-msg">{msg}</p>\n</div>\n</div>\n</div>'
+
+
+        # for row in data['chat_records']:
+        #     if row['username'] == username:
+        #         records = row['records'][recipient]
+        #     if msg != None:
+        #         records += f'<div class="outgoing-chats">\n<div class="outgoing-msg">\n<div class="outgoing-chats-msg">\n<p class="received-msg">{msg}</p>\n</div>\n</div>\n</div>'
+
+    with open('chat_records.json', 'w') as f:
+        json.dump(data, f, indent=2)
+    return page_view('chat', header='header_chatting', user=username, recipient=recipient, msgs=records)
 
 
 #-----------------------------------------------------------------------------
@@ -137,6 +166,49 @@ def about(username):
     else:
         return page_view("about", garble=about_garble())
 
+#-----------------------------------------------------------------------------
+# Sign up
+#-----------------------------------------------------------------------------
+
+def show_sign_up_page():
+    return page_view("sign_up", header='header_no_pic')
+
+#-----------------------------------------------------------------------------
+# Sign up check
+#-----------------------------------------------------------------------------
+
+def sign_up_check(username, password, password_2):
+    if password != password_2:
+        return page_view("invalid", reason="Two passwords are different", header='header_no_pic')
+    
+    data = None
+    with open('info.json', 'r') as f:
+        data = json.load(f)
+
+        for row in data['user_info']:
+            if row['username'] == username:
+                return page_view("invalid", reason="Username already exists", header='header_no_pic')
+
+        info = {"username" : username, "password" : password, "friends" : []}
+        data['user_info'].append(info)
+
+    with open('info.json', 'w') as f:
+        json.dump(data, f, indent=2)
+
+    records_info = {"username" : username, "records" : {}}
+    with open('chat_records.json', 'r') as f:
+        data = json.load(f)
+        data['chat_records'].append(records_info)
+
+    with open('chat_records.json', 'w') as f:
+        json.dump(data, f, indent=2)
+
+    return page_view("sign_up_valid", header='header_no_pic')
+
+#-----------------------------------------------------------------------------
+# logout
+#-----------------------------------------------------------------------------
+
 def logout(username):
     
     global login_status, msgs
@@ -144,6 +216,56 @@ def logout(username):
     login_status[username] = False
     return page_view("index")
 
+#-----------------------------------------------------------------------------
+# Show add friends page
+#-----------------------------------------------------------------------------
+
+def show_add_friends(username):
+    return page_view('add_friends', header='header_in_no_pic', user=username)
+
+def add_friends_check(username, recipient):
+    data = None
+    friend_exist = False
+    if username == recipient:
+        return page_view('invalid', header='header_in_no_pic', user=username, reason='It is user yourself!')
+
+    with open('info.json', 'r') as f:
+        data = json.load(f)
+
+        for row in data['user_info']:
+            if row['username'] == recipient:
+                friend_exist = True
+                break
+            if row['username'] == username:
+                if recipient in row['friends']:
+                    return page_view('invalid', header='header_in_no_pic', user=username, reason='Username is your friend')
+
+        if not friend_exist:
+            return page_view('invalid', header='header_in_no_pic', user=username, reason='Username do not exist')
+
+        for i in range(len(data['user_info'])):
+            if data['user_info'][i]['username'] == username:
+                data['user_info'][i]['friends'].append(recipient)
+
+            if data['user_info'][i]['username'] == recipient:
+                data['user_info'][i]['friends'].append(username)
+
+    with open('info.json', 'w') as f:
+        json.dump(data, f, indent=2)
+
+    with open('chat_records.json', 'r') as f:
+        data = json.load(f)
+
+        for i in range(len(data['chat_records'])):
+            if data['chat_records'][i]['username'] == username:
+                data['chat_records'][i]['records'][recipient] = ""
+            if data['chat_records'][i]['username'] == recipient:
+                data['chat_records'][i]['records'][username] = ""
+    
+    with open('chat_records.json', 'w') as f:
+        json.dump(data, f, indent=2)
+    
+    return page_view('add_valid', header='header_in_no_pic', user=username)
 
 # Returns a random string each time
 def about_garble():

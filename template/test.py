@@ -1,13 +1,13 @@
 import pandas as pd
 import csv
 import json
-  
+import requests
 
-# with open('credentials.csv', 'a') as f:
-#     writer = csv.writer(f)
-#     writer.writerow(['Iris', '888'])
+url = 'https://httpbin.org/cookies'
 
-with open('info.json') as f:
-    data = json.load(f)
-    for i in data['user_info']:
-        print(i['friends'])
+requestsJar = requests.cookies.RequestsCookieJar()
+requestsJar.set('username', 'Anna', domain='httpbin.org', path='/cookies')
+requestsJar.set('username', 'Bella', domain='httpbin.org', path='/Bella')
+r3 = requests.get(url, cookies=requestsJar)
+print(r3.text)
+

@@ -12,20 +12,25 @@ import json
 # Initialise our views, all arguments are defaults for the template
 page_view = view.View()
 
+
 login = False  # By default assume bad creds
-name = ''
+login_status = {}
+msgs = ''
 #-----------------------------------------------------------------------------
 # Index
 #-----------------------------------------------------------------------------
 
-def index():
+def index(username):
     '''
         index
         Returns the view for the index
     '''
-    global login
-    if login:
-        return page_view("index", header='header_in')
+    global login_status, msgs
+    msgs = ''
+    if username == None:
+        return page_view("index")
+    if login_status[username]:
+        return page_view("index", header='header_in', user=username)
     else:
         return page_view("index")
 
@@ -56,22 +61,24 @@ def login_check(username, password):
 
     
     err_str = "Incorrect Username" #error massage by default is incorrect username
-    global login, name
+    login = False # By default assume bad creds
     with open('info.json', 'r') as f:
         data = json.load(f)
 
         for row in data['user_info']:
             if row['username'] == username and row['password'] == password: #both correct
                 login = True
-                name = username
                 break
 
             if row['username'] == username:  #incorrect password
                 err_str = "Incorrect Password"
             
+    global login_status
+    
     #if none of these if statements are executed, invalid username
     if login: 
-        return page_view("valid", name=username,header='header_in_no_pic')
+        login_status[username] = True
+        return page_view("valid", user=username,header='header_in_no_pic')
     else:
         return page_view("invalid", reason=err_str, header='header_no_pic')
 
@@ -80,46 +87,61 @@ def login_check(username, password):
 # Friends
 #-----------------------------------------------------------------------------
 
-def friends():
+def friends(user):
+    global msgs
+    msgs = ''
     friends = []
     with open('info.json', 'r') as f:
         data = json.load(f)
         for row in data['user_info']:
-            if row['username'] == name:
+            if row['username'] == user:
                 friends = row['friends']
                 break
 
     html_form = ''
     for f in friends:
-        #html_form += f'<li><a href="/chat">{f}</a></li>\n'
-        html_form += f'<button name="user" type="submit" value={f}>{f}</button>'
-    return page_view("friend_list", header='header_in_no_pic', friends=html_form)
+        html_form += f'<button name="user" type="submit" value="{user} {f}">{f}</button>'
+    return page_view("friend_list", header='header_in_no_pic', friends=html_form, user=user)
 
 
 #-----------------------------------------------------------------------------
-# Chat_page
+# Chat page
 #-----------------------------------------------------------------------------
-def chat(username):
-    return page_view("chat", header='header_in_no_pic', name=username)
+def chat(username, recipient):
+    return page_view("chat", header='header_chatting', user=username, recipient=recipient, msgs='')
+
+#-----------------------------------------------------------------------------
+# send message
+#-----------------------------------------------------------------------------
+def send_msg(msg, username, recipient):
+    global msgs
+    if msg != None:
+        msgs += f'<div class="outgoing-chats">\n<div class="outgoing-msg">\n<div class="outgoing-chats-msg">\n<p class="received-msg">{msg}</p>\n</div>\n</div>\n</div>'
+    return page_view('chat', header='header_chatting', user=username, recipient=recipient, msgs=msgs)
+
 
 #-----------------------------------------------------------------------------
 # About
 #-----------------------------------------------------------------------------
 
-def about():
+def about(username):
     '''
         about
         Returns the view for the about page
     '''
-    global login
-    if login:
-        return page_view("about", garble=about_garble(), header='header_in')
+    global login_status
+    if username == None:
+        return page_view("index")
+    if login_status[username]:
+        return page_view("about", garble=about_garble(), header='header_in', user=username)
     else:
         return page_view("about", garble=about_garble())
 
-def logout():
-    global login
-    login = False
+def logout(username):
+    
+    global login_status, msgs
+    msgs = ''
+    login_status[username] = False
     return page_view("index")
 
 

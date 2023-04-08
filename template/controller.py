@@ -8,6 +8,7 @@ from bottle import route, get, post, error, request, static_file
 
 import model
 
+
 #-----------------------------------------------------------------------------
 # Static file paths
 #-----------------------------------------------------------------------------
@@ -71,7 +72,9 @@ def get_index():
         
         Serves the index page
     '''
-    return model.index()
+    username = request.query.get('user')
+    print(username)
+    return model.index(username)
 
 #-----------------------------------------------------------------------------
 
@@ -108,20 +111,31 @@ def post_login():
 
 @get('/friends')
 def show_friends():
-    return model.friends()
+    username = request.query.get('user')
+    return model.friends(username)
 
 #-----------------------------------------------------------------------------
 
-@post("/chat")
+@post("/chat") ##??
 def chat():
-    username = request.forms.get('user')
-    return model.chat(username)
+    username = request.forms.get('user').split(' ')[0]
+    recipient = request.forms.get('user').split(' ')[1]
+    return model.chat(username, recipient)
+
+#-----------------------------------------------------------------------------
+@post("/send_msg")
+def send_msg():
+    msg = request.forms.get('msg')
+    username = request.query.get('user')
+    recipient = request.query.get('recipient')
+    return model.send_msg(msg, username, recipient)
 
 #-----------------------------------------------------------------------------
 
 @get('/logout')
 def logout():
-    return model.logout()
+    username = request.query.get('user')
+    return model.logout(username)
 
 
 #-----------------------------------------------------------------------------
@@ -133,7 +147,8 @@ def get_about():
         
         Serves the about page
     '''
-    return model.about()
+    username = request.query.get('user')
+    return model.about(username)
 #-----------------------------------------------------------------------------
 
 # Help with debugging

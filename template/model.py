@@ -8,6 +8,9 @@
 import view
 import random
 import json
+import string
+from hashlib import md5
+import rsa
 
 # Initialise our views, all arguments are defaults for the template
 page_view = view.View()
@@ -188,8 +191,9 @@ def sign_up_check(username, password, password_2):
         for row in data['user_info']:
             if row['username'] == username:
                 return page_view("invalid", reason="Username already exists", header='header_no_pic')
-
-        info = {"username" : username, "password" : password, "friends" : []}
+        salt = salt_generator()
+        Password = hash_calculator(password,salt)[0]
+        info = {"username" : username, "password" : Password, "friends" : []}
         data['user_info'].append(info)
 
     with open('info.json', 'w') as f:
@@ -302,3 +306,36 @@ def handle_errors(error):
     error_type = error.status_line
     error_msg = error.body
     return page_view("error", error_type=error_type, error_msg=error_msg)
+
+def salt_generator():
+    random_str = " "
+    base_str = "ABCDEFGHIGKLMNOPQRSTUVWXYZabcdefghigklmnopqrstuvwxyz0123456789"
+    i = 0
+    ls1 = []
+
+    while i <= 49:
+        ls1.append(random.choice(base_str))
+        i += 1
+    random_str = "".join(ls1)
+    return random_str
+
+def hash_calculator(msg,salt):
+    obj = md5(salt.encode("utf-8"))
+    obj.update(msg.encode("utf-8"))
+
+    bs = obj.hexdigest()
+    ls1 = [bs,salt]
+    return ls1
+
+#encrypt the str with the public key, could use to encrypt the message and store in the chat_records
+def rsaEncrypt(str):
+    (public_key, private_key) = rsa.newkeys(512)
+    message = str.encode("utf-8")
+    encrypt = rsa.encrypt(message, public_key)
+    return [encrypt, private_key]
+
+#decrypt the str with private key, could use to encrypt the message and send to the reciever
+def rsaDecrypt(str, pk):
+    content = rsa.decrypt(str, pk)
+    con = content.decode("utf-8")
+    return con

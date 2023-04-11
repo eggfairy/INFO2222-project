@@ -11,7 +11,10 @@ import requests
 # r3 = requests.get(url, cookies=requestsJar)
 # print(r3.text)
 
-with open('chat_records.json', 'r') as f:
-        data = json.load(f)
-        print(data['chat_records'][0]['user'])
-                
+# with open('chat_records.json', 'r') as f:
+#         data = json.load(f)
+#         print(data['chat_records'][0]['user'])
+
+with open('pwd.txt', 'r') as f:
+    data = f.read()
+    print(data)

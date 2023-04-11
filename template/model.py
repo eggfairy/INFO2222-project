@@ -307,6 +307,7 @@ def handle_errors(error):
     error_msg = error.body
     return page_view("error", error_type=error_type, error_msg=error_msg)
 
+
 def salt_generator():
     random_str = " "
     base_str = "ABCDEFGHIGKLMNOPQRSTUVWXYZabcdefghigklmnopqrstuvwxyz0123456789"

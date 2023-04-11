@@ -18,7 +18,6 @@ page_view = view.View()
 
 login = False  # By default assume bad creds
 login_status = {}
-msgs = ''
 #-----------------------------------------------------------------------------
 # Index
 #-----------------------------------------------------------------------------
@@ -28,8 +27,7 @@ def index(username):
         index
         Returns the view for the index
     '''
-    global login_status, msgs
-    msgs = ''
+    global login_status
     if username == None:
         return page_view("index")
     if login_status[username]:
@@ -91,19 +89,17 @@ def login_check(username, password):
 #-----------------------------------------------------------------------------
 
 def friends(user):
-    global msgs
-    msgs = ''
     friends = []
     with open('info.json', 'r') as f:
         data = json.load(f)
         for row in data['user_info']:
             if row['username'] == user:
-                friends = row['friends']
+                friends = row['friends'] #get firends of current user
                 break
 
     html_form = ''
     for f in friends:
-        html_form += f'<button name="user" type="submit" value="{user} {f}">{f}</button>'
+        html_form += f'<button name="user" type="submit" value="{user} {f}">{f}</button>' #display user's friends as buttons
     return page_view("friend_list", header='header_in_no_pic', friends=html_form, user=user)
 
 
@@ -116,40 +112,44 @@ def chat(username, recipient):
         data = json.load(f)
         for row in data['chat_records']:
             if row['username'] == username:
-                records = row['records'][recipient]
+                records = row['records'][recipient] #display the chat records between specific users
     
     return page_view("chat", header='header_chatting', user=username, recipient=recipient, msgs=records)
 
 #-----------------------------------------------------------------------------
 # send message
 #-----------------------------------------------------------------------------
+
 def send_msg(msg, username, recipient):
-    records = ''
+    decrypt_records = ''
     data = None
     with open('chat_records.json', 'r') as f:
         data = json.load(f)
         for i in range(len(data['chat_records'])):
             if data['chat_records'][i]['username'] == username:
                 records = data['chat_records'][i]['records'][recipient]
-                if msg == None or msg == '':
-                    return page_view('chat', header='header_chatting', user=username, recipient=recipient, msgs=records)
+                decrypt_records = rsaDecrypt(records, pk)   ############### if they never chat, and thus records is an empty string, would decrypt_records be an empty string as well?
+                if msg == None or msg == '': #if msg is null, display the same page
+                    return page_view('chat', header='header_chatting', user=username, recipient=recipient, msgs=decrypt_records)
 
-                records += f'<div class="outgoing-chats">\n<div class="outgoing-msg">\n<div class="outgoing-chats-msg">\n<p class="received-msg">{msg}</p>\n</div>\n</div>\n</div>'
-                data['chat_records'][i]['records'][recipient] = records
+                
+                decrypt_records += f'<div class="outgoing-chats">\n<div class="outgoing-msg">\n<div class="outgoing-chats-msg">\n<p class="received-msg">{msg}</p>\n</div>\n</div>\n</div>'
+                encrypt_records = rsaEncrypt(decrypt_records)[0] ############### require recipient's public key
+
+                #append latest message to records
+                data['chat_records'][i]['records'][recipient] = encrypt_records
             
             if data['chat_records'][i]['username'] == recipient:
-                data['chat_records'][i]['records'][username] += f'<div class="received-chats">\n<div class="received-msg">\n<div class="received-msg-inbox">\n<p class="single-msg">{msg}</p>\n</div>\n</div>\n</div>'
-
-
-        # for row in data['chat_records']:
-        #     if row['username'] == username:
-        #         records = row['records'][recipient]
-        #     if msg != None:
-        #         records += f'<div class="outgoing-chats">\n<div class="outgoing-msg">\n<div class="outgoing-chats-msg">\n<p class="received-msg">{msg}</p>\n</div>\n</div>\n</div>'
+                records = data['chat_records'][i]['records'] ###############
+                records = rsaDecrypt(records, pk) ##############
+                records += f'<div class="received-chats">\n<div class="received-msg">\n<div class="received-msg-inbox">\n<p class="single-msg">{msg}</p>\n</div>\n</div>\n</div>'
+                records = rsaEncrypt(records)[0] ##############
+                data['chat_records'][i]['records'][username] = records
+                #append current message to records
 
     with open('chat_records.json', 'w') as f:
-        json.dump(data, f, indent=2)
-    return page_view('chat', header='header_chatting', user=username, recipient=recipient, msgs=records)
+        json.dump(data, f, indent=2) #update latest records to the file
+    return page_view('chat', header='header_chatting', user=username, recipient=recipient, msgs=decrypt_records)
 
 
 #-----------------------------------------------------------------------------
@@ -191,10 +191,11 @@ def sign_up_check(username, password, password_2):
         for row in data['user_info']:
             if row['username'] == username:
                 return page_view("invalid", reason="Username already exists", header='header_no_pic')
+            
         salt = salt_generator()
         Password = hash_calculator(password,salt)[0]
-        info = {"username" : username, "password" : Password, "friends" : []}
-        data['user_info'].append(info)
+        info = {"username" : username, "password" : Password, "friends" : []} 
+        data['user_info'].append(info) #add new user info the file
 
     with open('info.json', 'w') as f:
         json.dump(data, f, indent=2)
@@ -215,8 +216,7 @@ def sign_up_check(username, password, password_2):
 
 def logout(username):
     
-    global login_status, msgs
-    msgs = ''
+    global login_status
     login_status[username] = False
     return page_view("index")
 
@@ -229,7 +229,7 @@ def show_add_friends(username):
 
 def add_friends_check(username, recipient):
     data = None
-    friend_exist = False
+    friend_exist = False #by default user do not exist
     if username == recipient:
         return page_view('invalid', header='header_in_no_pic', user=username, reason='It is user yourself!')
 
@@ -237,17 +237,17 @@ def add_friends_check(username, recipient):
         data = json.load(f)
 
         for row in data['user_info']:
-            if row['username'] == recipient:
+            if row['username'] == recipient: 
                 friend_exist = True
                 break
             if row['username'] == username:
-                if recipient in row['friends']:
+                if recipient in row['friends']: #if the recipient is already user's friend
                     return page_view('invalid', header='header_in_no_pic', user=username, reason='Username is your friend')
 
-        if not friend_exist:
+        if not friend_exist: #if the recipient do not exist
             return page_view('invalid', header='header_in_no_pic', user=username, reason='Username do not exist')
 
-        for i in range(len(data['user_info'])):
+        for i in range(len(data['user_info'])): #no error
             if data['user_info'][i]['username'] == username:
                 data['user_info'][i]['friends'].append(recipient)
 
@@ -261,7 +261,7 @@ def add_friends_check(username, recipient):
         data = json.load(f)
 
         for i in range(len(data['chat_records'])):
-            if data['chat_records'][i]['username'] == username:
+            if data['chat_records'][i]['username'] == username: #create an empty chat records on both sides
                 data['chat_records'][i]['records'][recipient] = ""
             if data['chat_records'][i]['username'] == recipient:
                 data['chat_records'][i]['records'][username] = ""

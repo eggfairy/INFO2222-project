@@ -108,6 +108,7 @@ def post_login():
 
 #-----------------------------------------------------------------------------
 
+#Display friend list page
 @get('/friends')
 def show_friends():
     username = request.query.get('user')
@@ -115,6 +116,7 @@ def show_friends():
 
 #-----------------------------------------------------------------------------
 
+#get which user is going chat with
 @post("/chat")
 def chat():
     username = request.forms.get('user').split(' ')[0]
@@ -122,6 +124,8 @@ def chat():
     return model.chat(username, recipient)
 
 #-----------------------------------------------------------------------------
+
+#get message and update chat records
 @post("/send_msg")
 def send_msg():
     msg = request.forms.get('msg')
@@ -139,6 +143,7 @@ def logout():
 
 #-----------------------------------------------------------------------------
 
+
 @get('/about')
 def get_about():
     '''
@@ -150,12 +155,14 @@ def get_about():
     return model.about(username)
 #-----------------------------------------------------------------------------
 
+#display sign up page
 @get('/sign_up')
 def show_sign_up_page():
     return model.show_sign_up_page()
 
 #-----------------------------------------------------------------------------
 
+#attempt to sign up
 @post('/sign_up')
 def sign_up_check():
     username = request.forms.get('username')
@@ -165,6 +172,7 @@ def sign_up_check():
 
 #-----------------------------------------------------------------------------
 
+#display add friends page
 @get('/add_friends')
 def show_add_friends():
     username = request.query.get('user')
@@ -172,6 +180,7 @@ def show_add_friends():
 
 #-----------------------------------------------------------------------------
 
+#attempt to add friends
 @post('/add_friends')
 def add_friends_check():
     username = request.query.get('user')

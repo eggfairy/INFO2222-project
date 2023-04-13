@@ -10,7 +10,8 @@ import random
 import json
 import string
 from hashlib import md5
-import rsa
+from cryptography.hazmat.primitives.asymmetric import rsa, padding
+from cryptography.hazmat.primitives import serialization, hashes
 
 # Initialise our views, all arguments are defaults for the template
 page_view = view.View()
@@ -123,27 +124,37 @@ def chat(username, recipient):
 def send_msg(msg, username, recipient):
     decrypt_records = ''
     data = None
+    with open('user_info.json', 'r') as f:
+        data = json.load(f)
+        for row in data['user_info']:
+            if row['username'] == username :
+                public_key = row ['public key']
+    with open('private.json', 'r') as f:
+        data = json.load(f)
+        for row in data['private_key_info']:
+            if row['username'] == username:
+                private_key = row['private_key']
     with open('chat_records.json', 'r') as f:
         data = json.load(f)
         for i in range(len(data['chat_records'])):
             if data['chat_records'][i]['username'] == username:
                 records = data['chat_records'][i]['records'][recipient]
-                decrypt_records = rsaDecrypt(records, pk)   ############### if they never chat, and thus records is an empty string, would decrypt_records be an empty string as well?
+                decrypt_records = rsaDecrypt(records, private_key)   ############### if they never chat, and thus records is an empty string, would decrypt_records be an empty string as well?
                 if msg == None or msg == '': #if msg is null, display the same page
                     return page_view('chat', header='header_chatting', user=username, recipient=recipient, msgs=decrypt_records)
 
                 
                 decrypt_records += f'<div class="outgoing-chats">\n<div class="outgoing-msg">\n<div class="outgoing-chats-msg">\n<p class="received-msg">{msg}</p>\n</div>\n</div>\n</div>'
-                encrypt_records = rsaEncrypt(decrypt_records)[0] ############### require recipient's public key
+                encrypt_records = rsaEncrypt(decrypt_records,public_key) ############### require recipient's public key
 
                 #append latest message to records
                 data['chat_records'][i]['records'][recipient] = encrypt_records
             
             if data['chat_records'][i]['username'] == recipient:
                 records = data['chat_records'][i]['records'] ###############
-                records = rsaDecrypt(records, pk) ##############
+                records = rsaDecrypt(records, private_key) ##############
                 records += f'<div class="received-chats">\n<div class="received-msg">\n<div class="received-msg-inbox">\n<p class="single-msg">{msg}</p>\n</div>\n</div>\n</div>'
-                records = rsaEncrypt(records)[0] ##############
+                records = rsaEncrypt(records,public_key)[0] ##############
                 data['chat_records'][i]['records'][username] = records
                 #append current message to records
 
@@ -194,12 +205,19 @@ def sign_up_check(username, password, password_2):
             
         salt = salt_generator()
         Password = hash_calculator(password,salt)[0]
-        info = {"username" : username, "password" : Password, "friends" : []} 
+        public_key = str(get_public_key()[0])
+        private_key = str(get_public_key()[1])
+        info = {"username" : username, "password" : Password, "friends" : [],"public key" : public_key}
         data['user_info'].append(info) #add new user info the file
 
     with open('info.json', 'w') as f:
         json.dump(data, f, indent=2)
-
+    private_key_info = {"username" : username, "private_key" : private_key}
+    with open('private.json', "r") as f:
+        data = json.load(f)
+        data['private_key_info'].append(private_key_info)
+    with open('private.json', 'w') as f:
+        json.dump(data, f, indent=2)
     records_info = {"username" : username, "records" : {}}
     with open('chat_records.json', 'r') as f:
         data = json.load(f)
@@ -328,15 +346,42 @@ def hash_calculator(msg,salt):
     ls1 = [bs,salt]
     return ls1
 
+def get_public_key():
+    private_key = rsa.generate_private_key(
+        public_exponent=65537,
+        key_size=2048
+    )
+
+    public_key = private_key.public_key()
+
+    private_key_pem = private_key.private_bytes(
+        encoding=serialization.Encoding.PEM,
+        format=serialization.PrivateFormat.PKCS8,
+        encryption_algorithm=serialization.NoEncryption()
+    )
+
+    public_key_pem = public_key.public_bytes(
+        encoding=serialization.Encoding.PEM,
+        format=serialization.PublicFormat.SubjectPublicKeyInfo
+    )
+
+    private_key_str = private_key_pem.decode('utf-8')
+    public_key_str = public_key_pem.decode('utf-8')
+
+    return [public_key_str,private_key_str]
+
+
 #encrypt the str with the public key, could use to encrypt the message and store in the chat_records
-def rsaEncrypt(str):
-    (public_key, private_key) = rsa.newkeys(512)
+def rsaEncrypt(str,public_key_pem):
     message = str.encode("utf-8")
+    con = public_key_pem.encode("utf-8")
+    public_key = serialization.load_pem_public_key(public_key_pem)
     encrypt = rsa.encrypt(message, public_key)
-    return [encrypt, private_key]
+    return encrypt
 
 #decrypt the str with private key, could use to encrypt the message and send to the reciever
-def rsaDecrypt(str, pk):
-    content = rsa.decrypt(str, pk)
-    con = content.decode("utf-8")
+def rsaDecrypt(str, private_key_pem):
+    con = private_key_pem.decode("utf-8")
+    private_key = serialization.load_pem_public_key(con)
+    content = rsa.decrypt(str, private_key)
     return con

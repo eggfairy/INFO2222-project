@@ -1,7 +1,7 @@
 import pandas as pd
 import csv
 import json
-import requests
+import model
 
 # url = 'https://httpbin.org/cookies'
 
@@ -15,6 +15,9 @@ import requests
 #         data = json.load(f)
 #         print(data['chat_records'][0]['user'])
 
-with open('pwd.txt', 'r') as f:
-    data = f.read()
-    print(data)
+salt = model.salt_generator()
+pwd_info = model.hash_calculator('test1', salt)
+print(pwd_info)
+
+pwd_info = model.hash_calculator('test1', salt)
+print(pwd_info)

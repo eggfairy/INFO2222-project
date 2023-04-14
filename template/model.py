@@ -68,9 +68,11 @@ def login_check(username, password):
         data = json.load(f)
 
         for row in data['user_info']:
-            if row['username'] == username and row['password'] == password: #both correct
-                login = True
-                break
+            if row['username'] == username: 
+                pwd_hash = hash_calculator(password, row['password'][1])[0]
+                if pwd_hash == row['password'][0]: #both correct
+                    login = True
+                    break
 
             if row['username'] == username:  #incorrect password
                 err_str = "Incorrect Password"
@@ -204,7 +206,7 @@ def sign_up_check(username, password, password_2):
                 return page_view("invalid", reason="Username already exists", header='header_no_pic')
             
         salt = salt_generator()
-        Password = hash_calculator(password,salt)[0]
+        Password = hash_calculator(password,salt) ###
         public_key = str(get_public_key()[0])
         private_key = str(get_public_key()[1])
         info = {"username" : username, "password" : Password, "friends" : [],"public key" : public_key}
@@ -212,13 +214,16 @@ def sign_up_check(username, password, password_2):
 
     with open('info.json', 'w') as f:
         json.dump(data, f, indent=2)
+
     private_key_info = {"username" : username, "private_key" : private_key}
+
     with open('private.json', "r") as f:
         data = json.load(f)
         data['private_key_info'].append(private_key_info)
     with open('private.json', 'w') as f:
         json.dump(data, f, indent=2)
     records_info = {"username" : username, "records" : {}}
+
     with open('chat_records.json', 'r') as f:
         data = json.load(f)
         data['chat_records'].append(records_info)

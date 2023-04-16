@@ -15,9 +15,6 @@ import model
 #         data = json.load(f)
 #         print(data['chat_records'][0]['user'])
 
-salt = model.salt_generator()
-pwd_info = model.hash_calculator('test1', salt)
-print(pwd_info)
+model.send_msg("111", "test1", "jkjk")
 
-pwd_info = model.hash_calculator('test1', salt)
-print(pwd_info)
+

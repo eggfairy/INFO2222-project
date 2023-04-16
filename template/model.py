@@ -12,6 +12,7 @@ import string
 from hashlib import md5
 from cryptography.hazmat.primitives.asymmetric import rsa, padding
 from cryptography.hazmat.primitives import serialization, hashes
+import ssl
 
 # Initialise our views, all arguments are defaults for the template
 page_view = view.View()
@@ -29,7 +30,7 @@ def index(username):
         Returns the view for the index
     '''
     global login_status
-    if username == None:
+    if username == None or username not in login_status:
         return page_view("index")
     if login_status[username]:
         return page_view("index", header='header_in', user=username)
@@ -92,6 +93,10 @@ def login_check(username, password):
 #-----------------------------------------------------------------------------
 
 def friends(user):
+    global login_status
+    if user not in login_status or not login_status[user]:
+        return page_view("login", header='header_no_pic')
+    
     friends = []
     with open('info.json', 'r') as f:
         data = json.load(f)
@@ -102,7 +107,7 @@ def friends(user):
 
     html_form = ''
     for f in friends:
-        html_form += f'<button name="user" type="submit" value="{user} {f}">{f}</button>' #display user's friends as buttons
+        html_form += f'<button name="user" type="submit" value="{user},{f}">{f}</button>' #display user's friends as buttons
     return page_view("friend_list", header='header_in_no_pic', friends=html_form, user=user)
 
 
@@ -110,6 +115,10 @@ def friends(user):
 # Chat page
 #-----------------------------------------------------------------------------
 def chat(username, recipient):
+    global login_status
+    if username not in login_status or not login_status[username]:
+        return page_view("login", header='header_no_pic')
+    
     records = ''
     with open('chat_records.json', 'r') as f:
         data = json.load(f)
@@ -124,9 +133,13 @@ def chat(username, recipient):
 #-----------------------------------------------------------------------------
 
 def send_msg(msg, username, recipient):
+    global login_status
+    if username not in login_status or not login_status[username]:
+        return page_view("login", header='header_no_pic')
+    
     decrypt_records = ''
     data = None
-    with open('user_info.json', 'r') as f:
+    with open('info.json', 'r') as f:
         data = json.load(f)
         for row in data['user_info']:
             if row['username'] == username :
@@ -141,7 +154,10 @@ def send_msg(msg, username, recipient):
         for i in range(len(data['chat_records'])):
             if data['chat_records'][i]['username'] == username:
                 records = data['chat_records'][i]['records'][recipient]
-                decrypt_records = rsaDecrypt(records, private_key)   ############### if they never chat, and thus records is an empty string, would decrypt_records be an empty string as well?
+                if records == '':
+                    decrypt_records = ''
+                else:
+                    decrypt_records = rsaDecrypt(records, private_key)   ############### if they never chat, and thus records is an empty string, would decrypt_records be an empty string as well?
                 if msg == None or msg == '': #if msg is null, display the same page
                     return page_view('chat', header='header_chatting', user=username, recipient=recipient, msgs=decrypt_records)
 
@@ -175,7 +191,7 @@ def about(username):
         Returns the view for the about page
     '''
     global login_status
-    if username == None:
+    if username == None or username not in login_status:
         return page_view("index")
     if login_status[username]:
         return page_view("about", garble=about_garble(), header='header_in', user=username)
@@ -248,6 +264,10 @@ def logout(username):
 #-----------------------------------------------------------------------------
 
 def show_add_friends(username):
+    global login_status
+    if username not in login_status or not login_status[username]:
+        return page_view("login", header='header_no_pic')
+    
     return page_view('add_friends', header='header_in_no_pic', user=username)
 
 def add_friends_check(username, recipient):

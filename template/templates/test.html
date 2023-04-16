@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Message Encryption Example</title>
+    <script>
+        // Function to generate a random 256-bit AES key
+        function generateKey() {
+            return window.crypto.subtle.generateKey(
+                { name: 'AES-GCM', length: 256 },
+                true,
+                ['encrypt', 'decrypt']
+            );
+        }
+
+        // Function to encrypt a message using the generated key
+        async function encryptMessage() {
+            const message = document.getElementById('message').value;
+            const key = await generateKey();
+            const encodedMessage = new TextEncoder().encode(message);
+            const encryptedData = await window.crypto.subtle.encrypt(
+                { name: 'AES-GCM', iv: new Uint8Array(12) },
+                key,
+                encodedMessage
+            );
+            const encryptedMessage = new Uint8Array(encryptedData);
+            const encryptedHex = Array.prototype.map.call(
+                encryptedMessage,
+                x => ('00' + x.toString(16)).slice(-2)
+            ).join('');
+            document.getElementById('encryptedMessage').value = encryptedHex;
+        }
+    </script>
+</head>
+<body>
+    <h1>Message Encryption Example</h1>
+    <label for="message">Message:</label>
+    <input type="text" id="message">
+    <button onclick="encryptMessage()">Encrypt</button>
+    <br>
+    <label for="encryptedMessage">Encrypted Message:</label>
+    <input type="text" id="encryptedMessage" readonly>
+</body>
+</html>

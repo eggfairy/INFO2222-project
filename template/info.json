@@ -93,8 +93,21 @@
         "ddc93a5d4784787bad7f1a4e29faffca",
         "ZpOb6mWOXYGnZcKEiZqelDMVZflaXxoKpNYGdunEpQlazo4ahY"
       ],
-      "friends": [],
+      "friends": [
+        "test2"
+      ],
       "public key": "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAp/mfBTyKhDNYbOgBX4Cz\nSIBbnSa1dCv0sCZ+esFcZfYs9/+1L2HfTlyF1Qr8/dcRUUe2t/LZnnj958CHKn2+\nmYeCH5LaJ1jfAlkdopGkaHVMvq56auKzEGeW/f4MpihVbgoOXrApjykUhBSDkM8A\nvl3Z3KZIISfy7JlZipIGYEjp5dKo6QMxplr2LCG24W8KalsfeaUIcf3SzzKmIejL\nGbToJoQo+y2bJ8Hag9k81lWrl7R6ItmO8Onp6RMxpsTuCL/lYcH/dEK13LCmHtvC\nvTmPGVDLPtGgHL3S9idZVZbXCDUPRtc+mvPnNKJpminGrqqLhu2zNERLM1T3WGYZ\n1QIDAQAB\n-----END PUBLIC KEY-----\n"
+    },
+    {
+      "username": "test2",
+      "password": [
+        "683755564ce3e28359b8ab64930f90cd",
+        "Fu06gLKxk6SsCSAhg7W1g01LonNMHptUL47VYyOHiyVXoCsCsb"
+      ],
+      "friends": [
+        "test1"
+      ],
+      "public key": "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAw72Et50bJfQN811yENmG\n3RMs4BLJb6vksDlCZpFIno2Xm+5bTyXDFKFNuECQ62G1wEEYRh4N0RO791WQnTfO\nNRkU4nx9A0imUylj07+e0JbPN9Aba+migcgMZVpV8ZmfAg/GnyDcHQPNO6g32sdt\n9HljFp5FnwJxHafC7PEvgnQTsVOBcTVzQjb/4T5L1AZk4fcCVvfMFmVQmZjYWjS1\nSUIjW9wJ3IHgPyofo3DNgaj3j+MkmkZnpKK0Ar/c3eER+JgCDkVyLzuqoQIP5lZr\nIjGUq8GTOi5uK7eEm/sz2CgThRczRG3Y1r5fzzQmewulB6NQjv66UoiANFGM1bTo\nTwIDAQAB\n-----END PUBLIC KEY-----\n"
     }
   ]
 }

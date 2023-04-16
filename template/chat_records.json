@@ -64,15 +64,15 @@
     },
     {
       "username": "test1",
-      "records": {}
+      "records": {
+        "test2": ""
+      }
     },
     {
-      "username": "test1",
-      "records": {}
-    },
-    {
-      "username": "test1",
-      "records": {}
+      "username": "test2",
+      "records": {
+        "test1": ""
+      }
     }
   ]
 }

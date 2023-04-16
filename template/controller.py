@@ -4,7 +4,7 @@
     maybe some simple program logic
 '''
 
-from bottle import route, get, post, error, request, static_file
+from bottle import route, get, post, error, request, Bottle,static_file
 
 import model
 
@@ -119,8 +119,8 @@ def show_friends():
 #get which user is going chat with
 @post("/chat")
 def chat():
-    username = request.forms.get('user').split(' ')[0]
-    recipient = request.forms.get('user').split(' ')[1]
+    username = request.forms.get('user').split(',')[0]
+    recipient = request.forms.get('user').split(',')[1]
     return model.chat(username, recipient)
 
 #-----------------------------------------------------------------------------
@@ -129,6 +129,7 @@ def chat():
 @post("/send_msg")
 def send_msg():
     msg = request.forms.get('msg')
+    print(msg)
     username = request.query.get('user')
     recipient = request.query.get('recipient')
     return model.send_msg(msg, username, recipient)

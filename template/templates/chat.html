@@ -4,7 +4,6 @@
     <title>Chat Box UI</title>
     <link rel="stylesheet" href="css/styles.css">
 
-
 </head>
 <body>
 <!-- Main container  -->
@@ -37,12 +36,25 @@
 <!--  Message bottom section starts -->
                <div class="msg-bottom">
                 <div class="input-group">
-                    <form action="/send_msg?user=${user}&recipient=${recipient}" method="post">
-                    <input name="msg" type="text" class="form-control" placeholder="Write message...">
+                    <form action="/send_msg?user=${user}&recipient=${recipient}" method="post" id="FORM">
+                    <input name="msg" type="text" class="form-control" placeholder="Write message..." id="InputField">
                     <div class="input-group-append ">
-                        <input value="send" type="submit" class="input-group-text">
+                        <input value="send" type="submit" class="input-group-text" onclick="encryptInput()">
                     </div>
                     </form>
+                    <script>
+                        function encryptInput() {
+                            var input = document.getElementById("InputField").value;
+                            
+                            input += 'a' //encryption function
+
+                            // Set the input value to the form's input field
+                            document.getElementById("FORM").elements["msg"].value = input;
+                            
+                            // Submit the form
+                            document.getElementById("FORM").submit();
+                        }
+                    </script>
                 </div>
                 </div> 
                 

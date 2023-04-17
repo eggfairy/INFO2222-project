@@ -1,113 +1,35 @@
 {
   "user_info": [
     {
-      "username": "admin",
-      "password": "password",
-      "friends": [
-        "Anna",
-        "Bella"
-      ]
-    },
-    {
-      "username": "eggfairy",
-      "password": "123",
-      "friends": [
-        "Anna",
-        "Bella",
-        "Cathy",
-        "David"
-      ]
-    },
-    {
-      "username": "Anna",
-      "password": "111",
-      "friends": [
-        "admin"
-      ]
-    },
-    {
-      "username": "Bella",
-      "password": "222",
-      "friends": [
-        "admin"
-      ]
-    },
-    {
-      "username": "Cathy",
-      "password": "333",
-      "friends": []
-    },
-    {
-      "username": "David",
-      "password": "444",
-      "friends": [
-        "eggfairy"
-      ]
-    },
-    {
-      "username": "Ethan",
-      "password": "555",
-      "friends": []
-    },
-    {
-      "username": "Felix",
-      "password": "666",
-      "friends": []
-    },
-    {
-      "username": "Gura",
-      "password": "777",
-      "friends": []
-    },
-    {
-      "username": "Harrison",
-      "password": "888",
-      "friends": []
-    },
-    {
-      "username": "Iris",
-      "password": "999",
-      "friends": []
-    },
-    {
-      "username": "jkjkjkjk",
-      "password": "703759ec7ac8f9bf9ac4ba561fc5e7b1",
-      "friends": [],
-      "public key": "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEApyT5u8bsXJgQKUPv7iu8\nkDc6jBeheh6ix5/Mig8ZBRfl6xlA4td3m4V/HuN9/UnA+4FToM7fA+5Xm9x3ovoH\nqbjjjILG5yVpXd1BAuztZ4DqlPU2b1q9ZJAjwTocYvUmZv9MIznLspq/dQc388Wv\nsAFX7VuRVW1N/+bZnemrwtge4i1ov9VsqDJNJlpx1JfZdUtPw+Z24R6LO3yo47bA\nm+RlBG3MQE9OBLYNbw1K/b71YnsHEKTwvUDTZHMOMtKOBq4/yipBwfkr3I/Nh260\n8LqobrXX4LucNXypMM+T9/JCi5T/CpZwWmUZFiHc7nYELCcPB/qCITDPR37wxQmL\noQIDAQAB\n-----END PUBLIC KEY-----\n"
-    },
-    {
-      "username": "jkjkjk",
-      "password": "adcb7a71c96c26328df8bda922b477ee",
-      "friends": [],
-      "public key": "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtOOM11gDoaIafHnjSkTi\nd2vbzSXCYiSm+MffciXHML9MftZAcvuDSDlp6PYJyJJoLuhxcyGU5RwRDzHxTEIs\ngX9Z6t8u9keOFa2iw1vFuHLXrzrjFJb/e0zwgRObMETYzV3bs+ErPkcKD4DPeC9V\nE+83kjFOVAt4MpJmkcyJKcKnHGFoiqhq6d+ITmcd+wciOT4q7+aHMzOCt/G2vlEb\n7ebMGyCOMT6VpWsNORr4+ddrQOdMp4Rq7sPqGBRalvh4eTuXRdqoag9AXkYh/fXp\nq/JiLcxTBG9gMWcf3J/MrarCWyZw19u4qQAMN8qWsVkk7seuQzpLQlh2PRA2zxZG\nwQIDAQAB\n-----END PUBLIC KEY-----\n"
-    },
-    {
-      "username": "jkjk",
-      "password": "c3004b13ddb85b165b8fb13e1b6abd0b",
-      "friends": [],
-      "public key": "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAppCXk2RUMED+s1AOEXe5\nPdaUiwVmpt/qPwCEkatGQIf4T/JgmzLJUDZ/HiuploFPvPAypAVT8ULz9fnb4Gto\nJ6FXFg/A57EtbOp8JK/EXErAfYaN1GqEDABWmdi9zvkZ9bk8Xr8kQpL+Usis8+ql\nmWMroDML0x4g/3iV/Uy7c3LDLOqYAUln3ezpePKedlSEcc/AlGdSF4haiKW3Df6I\nIEaYohPTfyzTkh3xcEPkJHkyeWxNj7/XD8UpjT6DAlkid97QblM4Uu2fXT9oPxqQ\n1JWTmnNOxiyh3TodfwmdP0dXF+L8FljzfjXsfnf4WvozBmFrAil4UGYH7wuvv58M\nLwIDAQAB\n-----END PUBLIC KEY-----\n"
-    },
-    {
       "username": "test1",
       "password": [
-        "ddc93a5d4784787bad7f1a4e29faffca",
-        "ZpOb6mWOXYGnZcKEiZqelDMVZflaXxoKpNYGdunEpQlazo4ahY"
+        "fff4ed8fab320192902f1305017bd70c",
+        "D9KaCx2Bon9AK6wrDUiNdQyRNUd0sy1vSk9VrZVseMzucXrgqQ"
       ],
       "friends": [
-        "test2"
-      ],
-      "public key": "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAp/mfBTyKhDNYbOgBX4Cz\nSIBbnSa1dCv0sCZ+esFcZfYs9/+1L2HfTlyF1Qr8/dcRUUe2t/LZnnj958CHKn2+\nmYeCH5LaJ1jfAlkdopGkaHVMvq56auKzEGeW/f4MpihVbgoOXrApjykUhBSDkM8A\nvl3Z3KZIISfy7JlZipIGYEjp5dKo6QMxplr2LCG24W8KalsfeaUIcf3SzzKmIejL\nGbToJoQo+y2bJ8Hag9k81lWrl7R6ItmO8Onp6RMxpsTuCL/lYcH/dEK13LCmHtvC\nvTmPGVDLPtGgHL3S9idZVZbXCDUPRtc+mvPnNKJpminGrqqLhu2zNERLM1T3WGYZ\n1QIDAQAB\n-----END PUBLIC KEY-----\n"
+        "test2",
+        "test3"
+      ]
     },
     {
       "username": "test2",
       "password": [
-        "683755564ce3e28359b8ab64930f90cd",
-        "Fu06gLKxk6SsCSAhg7W1g01LonNMHptUL47VYyOHiyVXoCsCsb"
+        "c258131186029c325f8e9ee1d690ad13",
+        "sDggGxwBdSt8PfspXuuGrcfgmNgeAHdODf4n6HCmXH0neG8cdD"
       ],
       "friends": [
         "test1"
+      ]
+    },
+    {
+      "username": "test3",
+      "password": [
+        "d25564bcdad09beeb366bbac59b72e8b",
+        "9gVn8GpCSK3huPWKGHHsm5CoXXg7HVKWZcELubALe6GGxrHiiY"
       ],
-      "public key": "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAw72Et50bJfQN811yENmG\n3RMs4BLJb6vksDlCZpFIno2Xm+5bTyXDFKFNuECQ62G1wEEYRh4N0RO791WQnTfO\nNRkU4nx9A0imUylj07+e0JbPN9Aba+migcgMZVpV8ZmfAg/GnyDcHQPNO6g32sdt\n9HljFp5FnwJxHafC7PEvgnQTsVOBcTVzQjb/4T5L1AZk4fcCVvfMFmVQmZjYWjS1\nSUIjW9wJ3IHgPyofo3DNgaj3j+MkmkZnpKK0Ar/c3eER+JgCDkVyLzuqoQIP5lZr\nIjGUq8GTOi5uK7eEm/sz2CgThRczRG3Y1r5fzzQmewulB6NQjv66UoiANFGM1bTo\nTwIDAQAB\n-----END PUBLIC KEY-----\n"
+      "friends": [
+        "test1"
+      ]
     }
   ]
 }

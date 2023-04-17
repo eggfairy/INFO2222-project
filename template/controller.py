@@ -129,7 +129,6 @@ def chat():
 @post("/send_msg")
 def send_msg():
     msg = request.forms.get('msg')
-    print(msg)
     username = request.query.get('user')
     recipient = request.query.get('recipient')
     return model.send_msg(msg, username, recipient)

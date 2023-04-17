@@ -8,11 +8,8 @@
 import view
 import random
 import json
-import string
 from hashlib import md5
-from cryptography.hazmat.primitives.asymmetric import rsa, padding
-from cryptography.hazmat.primitives import serialization, hashes
-import ssl
+import rsa
 
 # Initialise our views, all arguments are defaults for the template
 page_view = view.View()
@@ -120,65 +117,106 @@ def chat(username, recipient):
         return page_view("login", header='header_no_pic')
     
     records = ''
-    with open('chat_records.json', 'r') as f:
-        data = json.load(f)
-        for row in data['chat_records']:
-            if row['username'] == username:
-                records = row['records'][recipient] #display the chat records between specific users
+    private = ''
+    with open("key/{}_private.pem".format(username), 'rb') as k:
+        private = k.read()
+    private = rsa.PrivateKey._load_pkcs1_pem(private)
+
+    with open(f'chat_records/{username}_{recipient}', 'rb') as f:
+        encrypt_records = f.read()
+        if encrypt_records == b'':
+            records = ''
+        else:
+            records = RSA_decryption(encrypt_records, private) #display the chat records between specific users
+
+    records = records.split('\n')
+    records_html = ''
+    for m in records:
+        content = ":".join(m.split(':')[1:])
+        if m.split(':')[0] == 'u':
+            records_html += f'<div class="outgoing-chats">\n<div class="outgoing-msg">\n<div class="outgoing-chats-msg">\n<p class="received-msg">{content}</p>\n</div>\n</div>\n</div>'
+        elif m.split(':')[0] == 'r':
+            records_html += f'<div class="received-chats">\n<div class="received-msg">\n<div class="received-msg-inbox">\n<p class="single-msg">{content}</p>\n</div>\n</div>\n</div>'
     
-    return page_view("chat", header='header_chatting', user=username, recipient=recipient, msgs=records)
+    return page_view("chat", header='header_chatting', user=username, recipient=recipient, msgs=records_html)
 
 #-----------------------------------------------------------------------------
 # send message
 #-----------------------------------------------------------------------------
 
 def send_msg(msg, username, recipient):
-    global login_status
-    if username not in login_status or not login_status[username]:
-        return page_view("login", header='header_no_pic')
+    # global login_status
+    # if username not in login_status or not login_status[username]:
+    #     return page_view("login", header='header_no_pic')
     
+    
+    user_public = ''
+    user_private = ''
+    rec_public = ''
+    rec_private = ''
+    with open("key/{}_public.pem".format(username), "rb") as k:
+        user_public = k.read()
+    with open("key/{}_private.pem".format(username), "rb") as k:
+        user_private = k.read()
+    with open("key/{}_public.pem".format(recipient), "rb") as k:
+        rec_public = k.read()
+    with open("key/{}_private.pem".format(recipient), "rb") as k:
+        rec_private = k.read()
+    user_public = rsa.PublicKey._load_pkcs1_pem(user_public)
+    user_private = rsa.PrivateKey._load_pkcs1_pem(user_private)
+    rec_public = rsa.PublicKey._load_pkcs1_pem(rec_public)
+    rec_private = rsa.PrivateKey._load_pkcs1_pem(rec_private)
+
     decrypt_records = ''
-    data = None
+    decrypt_html = ''
+    ###user to recipient side
+    with open(f'chat_records/{username}_{recipient}', 'rb') as f:
+        records = f.read()
 
-    public = rsa.PublicKey._load_pkcs1_pem(open("key/{}_public.pem".format(username), "rb").read())
-    encrypt_records = rsa.encrypt(bytes(msg, "utf-8"), public)
-    with open("data/encrypted.data", "wb") as f:
+        if records == b'':
+            decrypt_records = []
+        else:
+            decrypt_records = RSA_decryption(records, user_private)
+
+            decrypt_records = decrypt_records.split('\n')
+            for m in decrypt_records:
+                content = ":".join(m.split(':')[1:])
+                if m.split(':')[0] == 'u':
+                    decrypt_html += f'<div class="outgoing-chats">\n<div class="outgoing-msg">\n<div class="outgoing-chats-msg">\n<p class="received-msg">{content}</p>\n</div>\n</div>\n</div>'
+                elif m.split(':')[0] == 'r':
+                    decrypt_html += f'<div class="received-chats">\n<div class="received-msg">\n<div class="received-msg-inbox">\n<p class="single-msg">{content}</p>\n</div>\n</div>\n</div>'
+        
+        if msg == None or msg == '': #if msg is null, display the same page
+            return page_view('chat', header='header_chatting', user=username, recipient=recipient, msgs=decrypt_html)
+
+        decrypt_records.append(f'u:{msg}')
+        decrypt_records = '\n'.join(decrypt_records)
+        decrypt_html += f'<div class="outgoing-chats">\n<div class="outgoing-msg">\n<div class="outgoing-chats-msg">\n<p class="received-msg">{msg}</p>\n</div>\n</div>\n</div>'
+                
+        encrypt_records = RSA_encryption(decrypt_records, user_public)
+
+    with open(f'chat_records/{username}_{recipient}', 'wb') as f:
         f.write(encrypt_records)
-    private = rsa.PrivateKey._load_pkcs1_pem(open("key/{}_private.pem".format(username), 'rb').read())
-    encrypted = ""
-    with open("data/encrypted.data", "rb") as f:
-        encrypted = f.read()
-    decrypt_records = rsa.decrypt(encrypted, private)
 
+    ###recipient to user side
+    with open(f'chat_records/{recipient}_{username}', 'rb') as f:
+        records = f.read()
 
-    with open('chat_records.json', 'r') as f:
-        data = json.load(f)
-        for i in range(len(data['chat_records'])):
-            if data['chat_records'][i]['username'] == username:
-                records = data['chat_records'][i]['records'][recipient]
+        if records == b'':
+            decrypt_records = ''
+        else:
+            decrypt_records = RSA_decryption(records, rec_private)
 
-                if msg == None or msg == '': #if msg is null, display the same page
-                    return page_view('chat', header='header_chatting', user=username, recipient=recipient, msgs=decrypt_records)
+        decrypt_records = decrypt_records.split('\n')
+        decrypt_records.append(f'r:{msg}')
+        decrypt_records = '\n'.join(decrypt_records)
+                
+        encrypt_records = RSA_encryption(decrypt_records, rec_public)
 
-                decrypt_records += f'<div class="outgoing-chats">\n<div class="outgoing-msg">\n<div class="outgoing-chats-msg">\n<p class="received-msg">{msg}</p>\n</div>\n</div>\n</div>'
-
-                #append latest message to records
-                data['chat_records'][i]['records'][recipient] = encrypt_records
-            
-            if data['chat_records'][i]['username'] == recipient:
-                records = b''.join(data['chat_records'][i]['records']) ###############
-                decrypted_blocks = []
-                for offset in range(0, len(records), 256):
-                    block = records[offset:offset + 256]
-
-                records += b'<div class="received-chats">\n<div class="received-msg">\n<div class="received-msg-inbox">\n<p class="single-msg">{msg}</p>\n</div>\n</div>\n</div>'
-                data['chat_records'][i]['records'][username] = records
-                #append current message to records
-
-    with open('chat_records.json', 'w') as f:
-        json.dump(data, f, indent=2) #update latest records to the file
-    return page_view('chat', header='header_chatting', user=username, recipient=recipient, msgs=decrypt_records)
-
+    with open(f'chat_records/{recipient}_{username}', 'wb') as f:
+        f.write(encrypt_records)
+    
+    return page_view('chat', header='header_chatting', user=username, recipient=recipient, msgs=decrypt_html)
 
 
 #-----------------------------------------------------------------------------
@@ -228,15 +266,6 @@ def sign_up_check(username, password, password_2):
         data['user_info'].append(info) #add new user info the file
 
     with open('info.json', 'w') as f:
-        json.dump(data, f, indent=2)
-
-    records_info = {"username" : username, "records" : {}}
-
-    with open('chat_records.json', 'r') as f:
-        data = json.load(f)
-        data['chat_records'].append(records_info)
-
-    with open('chat_records.json', 'w') as f:
         json.dump(data, f, indent=2)
 
     return page_view("sign_up_valid", header='header_no_pic')
@@ -292,17 +321,11 @@ def add_friends_check(username, recipient):
     with open('info.json', 'w') as f:
         json.dump(data, f, indent=2)
 
-    with open('chat_records.json', 'r') as f:
-        data = json.load(f)
+    with open(f'chat_records/{username}_{recipient}', 'wb') as f:
+        f.write(b'')
+    with open(f'chat_records/{recipient}_{username}', 'wb') as f:
+        f.write(b'')
 
-        for i in range(len(data['chat_records'])):
-            if data['chat_records'][i]['username'] == username: #create an empty chat records on both sides
-                data['chat_records'][i]['records'][recipient] = ""
-            if data['chat_records'][i]['username'] == recipient:
-                data['chat_records'][i]['records'][username] = ""
-    
-    with open('chat_records.json', 'w') as f:
-        json.dump(data, f, indent=2)
     
     return page_view('add_valid', header='header_in_no_pic', user=username)
 
@@ -365,9 +388,23 @@ def hash_calculator(msg,salt):
 
 def get_key(username):
     key_name = username
-    (public, private) = rsa.newkeys(512)
+    (public, private) = rsa.newkeys(2048)
     with open("key/{}_public.pem".format(key_name), "wb") as f:
         f.write(public._save_pkcs1_pem())
 
     with open("key/{}_private.pem".format(key_name), "wb") as f:
         f.write(private._save_pkcs1_pem())
+
+def RSA_encryption(txt, key): #seperate plaintext into several chuncks
+    result = []
+    for n in range(0,len(txt),245):
+        chuncks = txt[n:n+245]
+        result.append(rsa.encrypt(chuncks.encode(), key))
+    return b''.join(result)
+
+def RSA_decryption(content, key):
+    result = []
+    for n in range(0,len(content),256):
+        chuncks = content[n:n+256]
+        result.append(rsa.decrypt(chuncks, key).decode())
+    return ''.join(result)
